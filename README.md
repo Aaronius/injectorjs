@@ -31,7 +31,7 @@ As it says, we've mapped the key "rank" to the value "1337".  The value could ha
 var credential = injector.get('rank');
 ```
 
-Our rank variable is now 1337.  We can retrieve it as many times as we want. We can also create as many mappings as we want. Now let's remove the mapping:
+Our rank variable is now 1337.  Whenever we map to a value, whatever goes in comes right back out unmodified.  We can retrieve it as many times as we want. We can also create as many mappings as we want. Now let's remove the mapping.
 
 ```js
 injector.unmap('rank');
