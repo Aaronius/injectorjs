@@ -58,7 +58,7 @@ var service1 = injector.get('service');
 var service2 = injector.get('service');
 ```
 
-Here, service1 and service2 are the same instance.  By calling asSingleton(), the injector only created a single instance of TwitterService and always returned that same instance.  By default, the instance is created at the moment it is first asked for.  However, we could have created the instance immediately by passing in true.
+Here, service1 and service2 are the same instance.  By calling asSingleton(), the injector only created a single instance of TwitterService and always returned that same instance.  By default, the instance is created at the moment it is first requested.  However, we could have created the instance immediately when the mapping was made by passing in true.
 
 ```js
 injector.map('service').toConstructor(TwitterService).asSingleton(true);
@@ -76,7 +76,7 @@ Namespaced constructors work too.
 injector.map('service').toConstructor('app.services.TwitterService');
 ```
 
-What if the process of creating an instance of TwitterService requires a little work?  We can map to a factory function.
+What if the process of creating an instance of TwitterService requires a little setup work?  We can map to a factory function.
 
 ```js
 injector.map('service').toFactory(function() {
@@ -112,7 +112,7 @@ The callback function will be called once for each mapping.
 
 ### Inject into
 
-Inversion of control containers are used to fulfill dependencies for a given object.  By default, injector.js assumes the target object has listed the names of attributes that should be injected in an array attribute named "inject".
+Inversion of control containers are used to fulfill dependencies for a given object.  By default, injector.js assumes the target object has listed the keys that should be injected in an array attribute named "inject".
 
 ```js
 injector.map('rank').toValue(1337);
@@ -125,7 +125,7 @@ var socialView = {
 injector.injectInto(socialView);
 ```
 
-The socialView object now has a "rank" attribute whose value is 1337 and a "service" attribute whose value is an instance of TwitterService.  If TwitterService has its own "inject" array, its dependencies will also be fulfilled when the TwitterService instance is created.
+The injector retrieves values for "rank" and "service" and sets the values onto respective "rank" and "service" attributes in the socialView object.  socialView now has a "rank" attribute whose value is 1337 and a "service" attribute whose value is an instance of TwitterService.  If TwitterService has its own "inject" array, its dependencies will be fulfilled when the TwitterService instance is created...and those dependencies' dependencies, and so on.
 
 The inject attribute can alternatively be a function that returns an array.
 
