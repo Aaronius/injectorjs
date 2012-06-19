@@ -145,7 +145,7 @@ describe('Injector, when injecting into an object', function() {
 		Injector.prototype.applyInjections = prevDelegate;
 	});
 
-	it('can use a custom injection point retrieval delegate on the injector', function() {
+	it('can use a custom injection point retrieval delegate for all injectors', function() {
 		var target = {
 			injectables: ['testKey']
 		};
@@ -159,6 +159,19 @@ describe('Injector, when injecting into an object', function() {
 		expect(target.testKey).toBe(100);
 
 		Injector.prototype.getInjectionPoints = prevDelegate;
+	});
+
+	it('can use a custom injection point retrieval delegate for a single injector', function() {
+		var target = {
+			injectables: ['testKey']
+		};
+
+		injector.getInjectionPoints = function(target) {
+			return target.injectables;
+		};
+
+		injector.injectInto(target);
+		expect(target.testKey).toBe(100);
 	});
 });
 
