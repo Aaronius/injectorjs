@@ -176,14 +176,14 @@ injector.applyInjections = function(key, value) {
 
 ### Parent injectors
 
-What if we want injectors to inherit mappings from a parent injector?
+What if we want to inherit mappings from another injector?
 
 ```js
 var parentInjector = new Injector();
 var childInjector = new Injector(parentInjector);
 ```
 
-Now if childInjector doesn't have a mapping for a given key, it will additionally look to its parent for the mapping.
+Now if childInjector doesn't have a mapping for a given key, it will additionally look to parentInjector for the mapping.
 
 ### Thanks
 
