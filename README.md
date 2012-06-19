@@ -9,9 +9,11 @@ Don't know what inversion of control is or why you would use it? Want to learn m
 
 ## API ##
 
-You can get a good feel for what injector.js is capable of by reading the [specs used for testing](https://github.com/Aaronius/injectorjs/blob/master/spec/spec.js). Even so, we'll go through some use cases below. This code is off-the-cuff so please report any errors you find.
+You can get a good feel for what injector.js is capable of by reading the [specs used for testing](https://github.com/Aaronius/injectorjs/blob/master/spec/spec.js). Even so, we'll go through some use cases below.
 
-Let's start out by creating an injector:
+### Map and get
+
+Let's create an injector.
 
 ```js
 var injector = new Injector();
@@ -20,19 +22,19 @@ var injector = new Injector();
 An injector without mappings doesn't do anything for us, so let's set up a mapping.
 
 ```js
-injector.map('credential').toValue(1337);
+injector.map('rank').toValue(1337);
 ```
 
-As it says, we've mapped the key "credential" to the value "1337".  The value could have been a string, a number, an object, a function, etc.  Now let's pull the value back out.
+As it says, we've mapped the key "rank" to the value "1337".  The value could have been a string, a number, an object, a function, etc.  Now let's pull the value back out.
 
 ```js
-var credential = injector.get('credential');
+var credential = injector.get('rank');
 ```
 
-Our credential variable is now 1337.  We can retrieve it as many times as we want. We can also create as many mappings as we want. Now let's remove the mapping:
+Our rank variable is now 1337.  We can retrieve it as many times as we want. We can also create as many mappings as we want. Now let's remove the mapping:
 
 ```js
-injector.unmap('credential');
+injector.unmap('rank');
 ```
 
 Simple enough.  Now let's create a mapping to a constructor.
@@ -85,7 +87,7 @@ injector.map('service').toFactory(function() {
 });
 ```
 
-Now when we retrieve the service from the injector it will call the factory function to get an instance.  Of course, we can make that a singleton too.
+Now when we retrieve the service from the injector it will call the factory function to get an instance.  Of course, we can make that a singleton too so the factory function is only called at most a single time.
 
 ```js
 injector.map('service').toFactory(function() {
@@ -96,5 +98,95 @@ injector.map('service').toFactory(function() {
 }).asSingleton();
 ```
 
+We already talked about how to retrieve a single mapping's value.  What if we want to retrieve values for more than one mapping at a time?
+
+```js
+injector.map('rank').toValue(1337);
+injector.map('service').toConstructor(TwitterService);
+injector.get(['rank', 'service'], function(key, value) {
+	alert('The value of key ' + key + ' is value ' + value);
+});
+```
+
+The callback function will be called once for each mapping.
+
+### Inject into
+
+Inversion of control containers are used to fulfill dependencies for a given object.  By default, injector.js assumes the target object has listed the names of attributes that should be injected in an array attribute named "inject".
+
+```js
+injector.map('rank').toValue(1337);
+injector.map('service').toConstructor(TwitterService);
+
+var socialView = {
+	inject: ['rank', 'service']
+};
+
+injector.injectInto(socialView);
+```
+
+The socialView object now has a "rank" attribute whose value is 1337 and a "service" attribute whose value is an instance of TwitterService.  If TwitterService has its own "inject" array, its dependencies will also be fulfilled when the TwitterService instance is created.
+
+The inject attribute can alternatively be a function that returns an array.
+
+```js
+var socialView = {
+	inject: function() { return ['rank', 'service']; }
+};
+```
+
+Developers are picky. Some may want the resulting attributes prepended with an underscore. The injector will always look for an attribute called applyInjections on the target object and, if one is found, it will be used to apply the injections.
+
+```js
+var socialView = {
+	inject: ['rank', 'service'],
+	applyInjections: function(key, value) {
+		this['_' + key] = value;
+	}
+};
+```
+
+Enough with the assumptions. Let's modify the behavior of Injector itself so that all injector instances look for an attribute called "injectables" instead of "inject".
+
+```js
+Injector.prototype.getInjectionPoints = function(target) {
+	return target.injectables;
+};
+```
+
+Or we can modify the behavior of Injector so that all injectors apply injections by prepending an underscore to the attribute names.
+
+```js
+Injector.prototype.applyInjections = function(key, value) {
+	this['_' + key] = value;
+}
+```
+
+Or we could just modify the behavior of a single injector instead of all injectors
+
+```js
+var injector = new Injector();
+injector.getInjectionPoints = function(target) {
+	return target.injectables;
+};
+injector.applyInjections = function(key, value) {
+	this['_' + key] = value;
+};
+```
+
+### Parent injectors
+
+What if we want injectors to inherit mappings from a parent injector?
+
+```js
+var parentInjector = new Injector();
+var childInjector = new Injector(parentInjector);
+```
+
+Now if childInjector doesn't have a mapping for a given key, it will additionally look to its parent for the mapping.
+
+### Thanks
+
+That's all for now. The above code was written off-the-cuff so please report any issues you find. Thanks!
 
 
