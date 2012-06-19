@@ -5,7 +5,7 @@ Injector.js is a fast, light-weight IoC container for JavaScript.  It's library-
 
 ## Inversion of control and dependency injection
 
-Don't know what inversion of control is or why you would use it? Want to learn more? Start by reading Martin Fowler's [Inversion of Control Containers and the Dependency Injection pattern](http://martinfowler.com/articles/injection.html)
+Don't know what inversion of control is or why you would use it? Want to learn more? Start by reading Martin Fowler's [Inversion of Control Containers and the Dependency Injection pattern](http://martinfowler.com/articles/injection.html).
 
 ## API ##
 
