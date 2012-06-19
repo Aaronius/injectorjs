@@ -64,7 +64,7 @@ Here, service1 and service2 are the same instance.  By calling asSingleton(), th
 injector.map('service').toConstructor(TwitterService).asSingleton(true);
 ```
 
-If the constructor is in the global scope, you can just pass its name as a string and the injector will go find it.
+If the constructor is in the global scope, you can just pass its name as a string and the injector will go grab it.
 
 ```js
 injector.map('service').toConstructor('TwitterService');
