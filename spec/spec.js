@@ -1,58 +1,58 @@
 var root = this;
-describe("Injector maps and retrieves", function() {
+describe("Injector", function() {
 	var injector;
 
 	beforeEach(function() {
 		injector = new Injector();
 	});
 
-	it('a number value', function() {
+	it('maps number value', function() {
 		injector.map('testKey').toValue(100);
 		expect(injector.get('testKey')).toBe(100);
 	});
 
-	it('a string value', function() {
+	it('maps a string value', function() {
 		injector.map('testKey').toValue('testValue');
 		expect(injector.get('testKey')).toBe('testValue');
 	});
 
-	it('a boolean value', function() {
+	it('maps a boolean value', function() {
 		injector.map('testKey').toValue(true);
 		expect(injector.get('testKey')).toBe(true);
 	});
 
-	it('an array value', function() {
+	it('maps an array value', function() {
 		var names = ['Roger', 'Dan'];
 		injector.map('testKey').toValue(names);
 		expect(injector.get('testKey')).toBe(names);
 	});
 
-	it('an object value', function() {
+	it('maps an object value', function() {
 		var user = {};
 		injector.map('testKey').toValue(user);
 		expect(injector.get('testKey')).toBe(user);
 	});
 
-	it('a function value', function() {
+	it('maps a function value', function() {
 		var jump = function() {};
 		injector.map('testKey').toValue(jump);
 		expect(injector.get('testKey')).toBe(jump);
 	});
 
-	it('a constructor reference', function() {
+	it('maps a constructor reference', function() {
 		var User = function() {};
 		injector.map('testKey').toConstructor(User);
 		expect(injector.get('testKey') instanceof User).toBe(true);
 	});
 
-	it('a constructor name', function() {
+	it('maps a constructor name', function() {
 		root.User = function() {};
 		injector.map('testKey').toConstructor('User');
 		expect(injector.get('testKey') instanceof root.User).toBe(true);
 		delete root.User;
 	});
 
-	it('a constructor name with namespace', function() {
+	it('maps a constructor name with namespace', function() {
 		var User = function() {};
 		root.my = {};
 		root.my.namespace = {
@@ -103,30 +103,62 @@ describe('Injector, when injecting into an object', function() {
 	beforeEach(function() {
 		injector = new Injector();
 		injector.map('testKey').toValue(100);
-		injector.map('testKey2').toValue(200);
 	});
 
 	it('injects using default delegate', function() {
 		var target = {
-			inject: ['testKey', 'testKey2']
+			inject: ['testKey']
 		};
 
 		injector.injectInto(target);
 		expect(target.testKey).toBe(100);
-		expect(target.testKey2).toBe(200);
 	});
-	it('injects using custom delegate', function() {
+
+	it('injects using custom apply delegate on target', function() {
 		var target = {
 			injected: {},
-			inject: ['testKey', 'testKey2'],
-			injectDelegate: function(key, value) {
+			inject: ['testKey'],
+			applyInjections: function(key, value) {
 				this.injected[key] = value;
 			}
 		};
 
 		injector.injectInto(target);
 		expect(target.injected.testKey).toBe(100);
-		expect(target.injected.testKey2).toBe(200);
+	});
+
+	it('can use a custom apply delegate on the injector', function() {
+		var target = {
+			inject: ['testKey'],
+			injected: {}
+		};
+
+		var prevDelegate = Injector.prototype.applyInjections;
+		Injector.prototype.applyInjections = function(key, value) {
+			this.injected[key] = value;
+		};
+
+		injector.map('testKey').toValue(100);
+		injector.injectInto(target);
+		expect(target.injected.testKey).toBe(100);
+
+		Injector.prototype.applyInjections = prevDelegate;
+	});
+
+	it('can use a custom injection point retrieval delegate on the injector', function() {
+		var target = {
+			injectables: ['testKey']
+		};
+
+		var prevDelegate = Injector.prototype.getInjectionPoints;
+		Injector.prototype.getInjectionPoints = function(target) {
+			return target.injectables;
+		};
+
+		injector.injectInto(target);
+		expect(target.testKey).toBe(100);
+
+		Injector.prototype.getInjectionPoints = prevDelegate;
 	});
 });
 
