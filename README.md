@@ -43,7 +43,7 @@ Simple enough.  Now let's create a mapping to a constructor.
 injector.map('service').toConstructor(TwitterService);
 ```
 
-Now when we request the value for the key "service" the injector will create an instance of TwitterService by calling "new" on it.
+Now when we request the value for the key "service" the injector will create an instance of TwitterService by using the "new" keyword (e.g., new TwitterService()).
 
 ```js
 var service1 = injector.get('service');
