@@ -28,7 +28,7 @@ injector.map('rank').toValue(1337);
 As it says, we've mapped the key "rank" to the value "1337".  The value could have been a string, a number, an object, a function, etc.  Now let's pull the value back out.
 
 ```js
-var credential = injector.get('rank');
+var rank = injector.get('rank');
 ```
 
 Our rank variable is now 1337.  Whenever we map to a value, whatever goes in comes right back out unmodified.  We can retrieve it as many times as we want. We can also create as many mappings as we want. Now let's remove the mapping.
