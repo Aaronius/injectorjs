@@ -2,6 +2,11 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		path: {
+			src: 'src/injector.js',
+			dest: 'build/injector.min.js',
+			spec: 'spec/spec.js'
+		},
 		jshint: {
 			options: {
 				curly: true,
@@ -15,12 +20,12 @@ module.exports = function(grunt) {
 				boss: true,
 				eqnull: true
 			},
-			src: ['Gruntfile.js', 'src/injector.js']
+			src: ['Gruntfile.js', '<%= path.src %>']
 		},
 		jasmine: {
-			src: 'src/injector.js',
+			src: '<%= path.src %>',
 			options: {
-				specs: 'spec/spec.js'
+				specs: '<%= path.spec %>'
 			}
 		},
 		uglify: {
@@ -33,8 +38,8 @@ module.exports = function(grunt) {
 				report: 'gzip'
 			},
 			build: {
-				src: 'src/injector.js',
-				dest: 'build/injector.min.js'
+				src: '<%= path.src %>',
+				dest: '<%= path.dest %>'
 			}
 		}
 	});
