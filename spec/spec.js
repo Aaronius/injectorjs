@@ -107,7 +107,7 @@ describe('Injector, when injecting into an object', function() {
 
 	it('injects using default delegate', function() {
 		var target = {
-			inject: ['testKey']
+			$inject: ['testKey']
 		};
 
 		injector.injectInto(target);
@@ -117,8 +117,8 @@ describe('Injector, when injecting into an object', function() {
 	it('injects using custom apply delegate on target', function() {
 		var target = {
 			injected: {},
-			inject: ['testKey'],
-			applyInjections: function(key, value) {
+			$inject: ['testKey'],
+			$applyInjections: function(key, value) {
 				this.injected[key] = value;
 			}
 		};
@@ -129,7 +129,7 @@ describe('Injector, when injecting into an object', function() {
 
 	it('can use a custom apply delegate on the injector', function() {
 		var target = {
-			inject: ['testKey'],
+			$inject: ['testKey'],
 			injected: {}
 		};
 
@@ -186,11 +186,11 @@ describe('Injector, when injecting into objects', function() {
 		var ClassA = function() {};
 
 		var ClassB = function() {
-			this.inject = ['a'];
+			this.$inject = ['a'];
 		};
 
 		var ClassC = function() {
-			this.inject = ['b'];
+			this.$inject = ['b'];
 		};
 
 		injector.map('a').toConstructor(ClassA);
@@ -210,12 +210,12 @@ describe('Injector, when injecting into objects', function() {
 			bCount = 0;
 
 		var ClassA = function() {
-			this.inject = ['b'];
+			this.$inject = ['b'];
 			aCount++;
 		};
 
 		var ClassB = function() {
-			this.inject = ['a'];
+			this.$inject = ['a'];
 			bCount++;
 		};
 

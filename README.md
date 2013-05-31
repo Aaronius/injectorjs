@@ -112,45 +112,45 @@ The callback function will be called once for each mapping.
 
 ### Inject into
 
-Inversion of control containers are used to fulfill dependencies for a given object.  By default, injector.js assumes the target object has listed the keys that should be injected in an array attribute named "inject".
+Inversion of control containers are used to fulfill dependencies for a given object.  By default, injector.js assumes the target object has listed the keys that should be injected in an array attribute named "$inject".
 
 ```js
 injector.map('rank').toValue(1337);
 injector.map('service').toConstructor(TwitterService);
 
 var socialView = {
-	inject: ['rank', 'service']
+	$inject: ['rank', 'service']
 };
 
 injector.injectInto(socialView);
 ```
 
-The injector retrieves values for "rank" and "service" and sets the values onto respective "rank" and "service" attributes in the socialView object.  socialView now has a "rank" attribute whose value is 1337 and a "service" attribute whose value is an instance of TwitterService.  If TwitterService has its own "inject" array, its dependencies will be fulfilled when the TwitterService instance is created...and those dependencies' dependencies, and so on.
+The injector retrieves values for "rank" and "service" and sets the values onto respective "rank" and "service" attributes in the socialView object.  socialView now has a "rank" attribute whose value is 1337 and a "service" attribute whose value is an instance of TwitterService.  If TwitterService has its own "$inject" array, its dependencies will be fulfilled when the TwitterService instance is created...and those dependencies' dependencies, and so on.
 
-The inject attribute can alternatively be a function that returns an array.
+The $inject attribute can alternatively be a function that returns an array.
 
 ```js
 var socialView = {
-	inject: function() { return ['rank', 'service']; }
+	$inject: function() { return ['rank', 'service']; }
 };
 ```
 
-Developers are picky. Some may want the resulting attributes prepended with an underscore. The injector will always look for an attribute called applyInjections on the target object and, if one is found, it will be used to apply the injections.
+Developers are picky. Some may want the resulting attributes prepended with an underscore. The injector will always look for an attribute called $applyInjections on the target object and, if one is found, it will be used to apply the injections.
 
 ```js
 var socialView = {
-	inject: ['rank', 'service'],
-	applyInjections: function(key, value) {
+	$inject: ['rank', 'service'],
+	$applyInjections: function(key, value) {
 		this['_' + key] = value;
 	}
 };
 ```
 
-Enough with the assumptions. Let's modify the behavior of Injector itself so that all injector instances look for an attribute called "injectables" instead of "inject".
+Enough with the assumptions. Let's modify the behavior of Injector itself so that all injector instances look for an attribute called "$injectables" instead of "$inject".
 
 ```js
 Injector.prototype.getInjectionPoints = function(target) {
-	return target.injectables;
+	return target.$injectables;
 };
 ```
 
@@ -167,7 +167,7 @@ Or we could just modify the behavior of a single injector instead of all injecto
 ```js
 var injector = new Injector();
 injector.getInjectionPoints = function(target) {
-	return target.injectables;
+	return target.$injectables;
 };
 injector.applyInjections = function(key, value) {
 	this['_' + key] = value;

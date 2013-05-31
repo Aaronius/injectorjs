@@ -203,14 +203,14 @@
 	};
 
 	// Given a target object, retrieves the keys for injections that should be fulfilled when injecting into the
-	// target object.  By default, this uses target.inject which can be a single key string, an array of key strings,
+	// target object.  By default, this uses target.$inject which can be a single key string, an array of key strings,
 	// or a function that returns a key string or array of key strings.
 	// This can be swapped out for a custom function as necessary.
 	proto.getInjectionPoints = function(target) {
-		if (isFunction(target.inject)) {
-			return target.inject();
+		if (isFunction(target.$inject)) {
+			return target.$inject();
 		} else {
-			return target.inject;
+			return target.$inject;
 		}
 	};
 
@@ -222,7 +222,7 @@
 
 	// Fulfills injections for a target object.  By default, this uses the getInjectionPoints() function
 	// to retrieve a list of keys for which injections should be implied and uses the applyInjections() function
-	// to apply the injections to the target object.  If an applyInjections() function is provided on the object
+	// to apply the injections to the target object.  If an $applyInjections() function is provided on the object
 	// itself, that function will be used instead of the injector's global applyInjections() function.
 	proto.injectInto = function(target) {
 		if (!target) {
@@ -235,7 +235,7 @@
 			return this;
 		}
 
-		this.get(keys, target.applyInjections || this.applyInjections, target);
+		this.get(keys, target.$applyInjections || this.applyInjections, target);
 
 		return this;
 	};
