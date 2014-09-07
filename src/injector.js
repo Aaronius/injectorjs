@@ -202,6 +202,13 @@
 		}
 	};
 
+	/**
+	 * Creates a child injector using this injector instance as its parent.
+	 */
+	proto.createChildInjector = function() {
+		return new Injector(this);
+	},
+
 	// Given a target object, retrieves the keys for injections that should be fulfilled when injecting into the
 	// target object.  By default, this uses target.$inject which can be a single key string, an array of key strings,
 	// or a function that returns a key string or array of key strings.
@@ -226,7 +233,7 @@
 	proto.getPostInjectMethodName = function(target) {
 		return '$postInject';
 	},
-	
+		
 	// Fulfills injections for a target object.  By default, this uses the getInjectionPoints() function
 	// to retrieve a list of keys for which injections should be implied and uses the applyInjections() function
 	// to apply the injections to the target object.  If an $applyInjections() function is provided on the object
@@ -241,7 +248,7 @@
 		if (keys) {
 			this.get(keys, target.$applyInjections || this.applyInjections, target);  
 		}
-		
+				
 		var postInjectMethodName = this.getPostInjectMethodName(target);
 		if (postInjectMethodName && isFunction(target[postInjectMethodName])) {
 			target[postInjectMethodName]();

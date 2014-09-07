@@ -212,10 +212,10 @@ What if we want to inherit mappings from another injector?
 
 ```js
 var parentInjector = new Injector();
-var childInjector = new Injector(parentInjector);
+var childInjector = parentInjector.createChildInjector();
 ```
 
-Now if childInjector doesn't have a mapping for a given key, it will additionally look to parentInjector for the mapping.  A parent injector can be set or removed at any time.
+Now if `childInjector` doesn't have a mapping for a given key, it will additionally look to `parentInjector` for the mapping.  A parent injector can be set or removed at any time.
 
 ```js
 var parentInjector = new Injector();

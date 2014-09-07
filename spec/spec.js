@@ -62,6 +62,12 @@ describe("Injector", function() {
 		expect(injector.get('testKey') instanceof User).toBe(true);
 		delete root.my;
 	});
+	  
+	it('creates child injectors', function() {
+		var childInjector = injector.createChildInjector();
+		expect(injector).not.toBe(childInjector);
+		console.log(childInjector instanceof Injector);
+	});
 });
 
 describe('Injector, when reporting values', function() {
@@ -173,7 +179,7 @@ describe('Injector, when injecting into an object', function() {
 		injector.injectInto(target);
 		expect(target.testKey).toBe(100);
 	});
-			  
+							  
 	it('calls post-inject method', function() {
 		var target = {
 			$inject: ['testKey'],
@@ -185,7 +191,7 @@ describe('Injector, when injecting into an object', function() {
 		injector.injectInto(target);
 		expect(target.$postInject.callCount).toBe(1);
 	});
-			  
+							  
 	it('can use custom post-inject method for all injectors', function() {
 		var target = {
 			$inject: ['testKey'],
@@ -198,7 +204,7 @@ describe('Injector, when injecting into an object', function() {
 		Injector.prototype.getPostInjectMethodName = function() {
 			return 'myPostInject';
 		};
-						    
+														    
 		injector.injectInto(target);
 		expect(target.myPostInject.callCount).toBe(1);
 		Injector.prototype.getPostInjectMethodName = prevGetPostInjectMethodName;
@@ -286,5 +292,5 @@ describe('Injector', function() {
 		expect(inj2).toBeDefined();
 		expect(inj1).toBe(inj2);
 		root.Injector = inj1;
-	})
+	});
 });
