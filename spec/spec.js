@@ -173,6 +173,52 @@ describe('Injector, when injecting into an object', function() {
 		injector.injectInto(target);
 		expect(target.testKey).toBe(100);
 	});
+			  
+	it('calls post-inject method', function() {
+		var target = {
+			$inject: ['testKey'],
+			$postInject: function() {}
+		};
+
+		spyOn(target, '$postInject');
+
+		injector.injectInto(target);
+		expect(target.$postInject.callCount).toBe(1);
+	});
+			  
+	it('can use custom post-inject method for all injectors', function() {
+		var target = {
+			$inject: ['testKey'],
+			myPostInject: function() {}
+		};
+
+		spyOn(target, 'myPostInject');
+
+		var prevGetPostInjectMethodName = Injector.prototype.getPostInjectMethodName; 
+		Injector.prototype.getPostInjectMethodName = function() {
+			return 'myPostInject';
+		};
+						    
+		injector.injectInto(target);
+		expect(target.myPostInject.callCount).toBe(1);
+		Injector.prototype.getPostInjectMethodName = prevGetPostInjectMethodName;
+	});
+
+	it('can use custom post-inject method for a single injector', function() {
+		var target = {
+			$inject: ['testKey'],
+			myPostInject: function() {}
+		};
+
+		spyOn(target, 'myPostInject');
+
+		injector.getPostInjectMethodName = function() {
+			return 'myPostInject';
+		};
+
+		injector.injectInto(target);
+		expect(target.myPostInject.callCount).toBe(1);
+	});
 });
 
 describe('Injector, when injecting into objects', function() {

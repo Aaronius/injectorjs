@@ -174,6 +174,38 @@ injector.applyInjections = function(key, value) {
 };
 ```
 
+### Post-injection
+
+Sometimes an object needs to know when its injections have been fulfilled (i.e., it has been "[injected into](#inject-into)"). By default, the injector will look for a `$postInject` method on the target object and, if one exists, will call the method after fullfilling dependencies:
+
+```js
+var socialView = {
+	$inject: ['rank', 'service'],
+	$postInject: function() {
+		// Do what needs to be done with rank and service dependencies.
+	}
+};
+
+injector.injectInto(socialView);
+```
+
+Of course, the name of the method that is called is configurable for all injectors. For example, let's have all injectors call a method named `postConstruct` instead of `$postInject`:
+
+```js
+Injector.prototype.getPostInjectMethodName = function() {
+	return 'postConstruct';
+};
+```
+
+Or we could configure just a single injector:
+
+```js
+var injector = new Injector();
+injector.getPostInjectMethodName = function() {
+    return 'postConstruct';
+};
+```
+
 ### Parent injectors
 
 What if we want to inherit mappings from another injector?

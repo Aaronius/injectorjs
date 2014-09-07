@@ -220,6 +220,13 @@
 		this[key] = value;
 	};
 
+	// Given a target object, retrieves the name of the method that should be called after injecting into the
+	// target object. By default, this uses target.$postInject which must be a string that matches
+	// the name of the method to be called. The method must be a member of target.
+	proto.getPostInjectMethodName = function(target) {
+		return '$postInject';
+	},
+	
 	// Fulfills injections for a target object.  By default, this uses the getInjectionPoints() function
 	// to retrieve a list of keys for which injections should be implied and uses the applyInjections() function
 	// to apply the injections to the target object.  If an $applyInjections() function is provided on the object
@@ -231,11 +238,14 @@
 
 		var keys = this.getInjectionPoints(target);
 
-		if (!keys) {
-			return this;
+		if (keys) {
+			this.get(keys, target.$applyInjections || this.applyInjections, target);  
 		}
-
-		this.get(keys, target.$applyInjections || this.applyInjections, target);
+		
+		var postInjectMethodName = this.getPostInjectMethodName(target);
+		if (postInjectMethodName && isFunction(target[postInjectMethodName])) {
+			target[postInjectMethodName]();
+		}
 
 		return this;
 	};
